@@ -43,7 +43,6 @@
           $(wordleGame.rows[i].children).css("outline", "none");
           $(wordleGame.rows[i].children).css("cursor", "none");
         }
-        // setFila(wordleGame.rows[3], false);
       });
 
       //Recibe la fila que se hará editable
@@ -75,6 +74,7 @@
         let dict_user_word = word_dictionary(word);
         let aux_dict_main = new Map(dict_word_main);
         let right_position = new Set();
+        let not_right_position = [];
 
         // Primero compruebo que los que  estén bien
         for (let i = 0; i < fila.children.length; i++) {
@@ -83,10 +83,12 @@
             right_position.add(i);
             aux_dict_main.set(word[i], aux_dict_main.get(word[i]) - 1);
             $(fila.children[i]).css("background-color", "green");
+          } else {
+            not_right_position.push(i);
           }
         }
         //Después marcamos las que estén mal colocadas o estén mal
-        for (let i = 0; i < fila.children.length; i++) {
+        not_right_position.forEach((i) => {
           if (
             !right_position.has(i) &&
             aux_dict_main.has(word[i]) &&
@@ -98,7 +100,7 @@
           } else if (!right_position.has(i)) {
             $(fila.children[i]).css("background-color", "black");
           }
-        }
+        });
       }
       function compruebaPalabra(fila, palabra) {
         //Si la palabra introducida es igual a la palabra que tiene que adivinar, gana
@@ -191,10 +193,6 @@
       const palabraAdivinar = ajaxGETPalabraRandom();
       // const palabraAdivinar = "VIVAZ";
       const dict_word_main = word_dictionary(palabraAdivinar);
-      console.log(
-        "🚀 ~ file: index.html ~ line 203 ~ dict_word_main",
-        dict_word_main
-      );
       console.log(palabraAdivinar);
     </script>
   </body>
