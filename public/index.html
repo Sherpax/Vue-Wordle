@@ -1,17 +1,201 @@
+<!-- Autor: Manuel Santiago Vázquez Del Pino -->
 <!DOCTYPE html>
 <html lang="">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico" />
     <title><%= htmlWebpackPlugin.options.title %></title>
   </head>
   <body>
     <noscript>
-      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+      <strong
+        >We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work
+        properly without JavaScript enabled. Please enable it to
+        continue.</strong
+      >
     </noscript>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      const wordleGame = {
+        rows: [],
+        current_row: 0,
+      };
+
+      //Tan pronto renderize el tablero, establecemos las propiedades y el css de cada input
+      $(document).ready(function () {
+        wordleGame.rows = $(".row");
+        for (let i = 1; i < wordleGame.rows.length; i++) {
+          // console.log(wordleGame.rows[i].children);
+          $(wordleGame.rows[i].children).prop("disabled", true);
+          $(wordleGame.rows[i].children).css(
+            "background-color",
+            "rgba(0, 224, 200, 0.8)"
+          );
+          $(wordleGame.rows[i].children).css("outline", "none");
+          $(wordleGame.rows[i].children).css("cursor", "none");
+        }
+        // setFila(wordleGame.rows[3], false);
+      });
+
+      //Recibe la fila que se hará editable
+      /* @params
+      row = fila actual
+      disabled = {true, false}
+    */
+      // eslint-disable-next-line no-unused-vars
+      function setFila(row, disabled = true) {
+        if (row != null) {
+          $(row.children).prop("disabled", disabled);
+          if (disabled) {
+            $(row.children).css("outline", "none");
+            $(row.children).css("cursor", "none");
+            //TODO: Recuperar outline siguientes filas
+          } else {
+            $(row.children).css("background-color", "white");
+            $(row.children).css("outline", "");
+            $(row.children).css("cursor", "auto");
+          }
+        }
+      }
+
+      //Función  que le da el background-color a los inputs
+      function dibujaLetras(fila, word) {
+        // Si la letra está en la palabra, entonces green
+        // Si la letra está en la palabra, pero no en la posición correcta, entonces yellow
+        // Si la letra no está en la palabra, entonces black
+        let dict_user_word = word_dictionary(word);
+        let aux_dict_main = new Map(dict_word_main);
+        let right_position = new Set();
+
+        // Primero compruebo que los que  estén bien
+        for (let i = 0; i < fila.children.length; i++) {
+          //Si coinciden en posición, entonces la pintamos de verde
+          if (word.charAt(i) === palabraAdivinar.charAt(i)) {
+            right_position.add(i);
+            aux_dict_main.set(word[i], aux_dict_main.get(word[i]) - 1);
+            $(fila.children[i]).css("background-color", "green");
+          }
+        }
+        //Después marcamos las que estén mal colocadas o estén mal
+        for (let i = 0; i < fila.children.length; i++) {
+          if (
+            !right_position.has(i) &&
+            aux_dict_main.has(word[i]) &&
+            dict_user_word.has(word[i]) &&
+            aux_dict_main.get(word[i]) > 0
+          ) {
+            aux_dict_main.set(word[i], aux_dict_main.get(word[i]) - 1);
+            $(fila.children[i]).css("background-color", "yellow");
+          } else if (!right_position.has(i)) {
+            $(fila.children[i]).css("background-color", "black");
+          }
+        }
+      }
+      function compruebaPalabra(fila, palabra) {
+        //Si la palabra introducida es igual a la palabra que tiene que adivinar, gana
+        if (palabra === palabraAdivinar) {
+          // dibujaLetras(fila, palabra);
+          $(fila.children).css("background", "green");
+          alert("Has ganado, oleee!");
+        } else {
+          //Llamamos a la función que dibuja las letras que coinciden
+          dibujaLetras(fila, palabra);
+          //Seteamos la fila actual para que no sea editable
+          setFila(fila, true);
+          if (wordleGame.current_row < 4) {
+            //Hacemos que la siguiente fila sea editable
+            ++wordleGame.current_row;
+            fila = wordleGame.rows[wordleGame.current_row];
+            setFila(fila, false);
+          } else {
+            alert(
+              `Has perdido... :(\nla palabra correcta era: ${palabraAdivinar}`
+            );
+          }
+        }
+      }
+
+      //Main
+      $(document).ready(function () {
+        $("#btn-check").click(function () {
+          //Comprobamos que no pueda llegar más allá de la última fila
+          if (wordleGame.current_row <= 4) {
+            //Validamos que la palabra existe
+            let row = wordleGame.rows[wordleGame.current_row];
+            let word = "";
+            for (let i = 0; i < row.children.length; i++) {
+              word += row.children[i].value;
+            }
+            //Si la palabra tiene las 5 letras, comprobamos que esa palabra exista (api rae)
+            if (word.length === 5) {
+              if (ajaxCompruebaPalabra(word) !== null) {
+                compruebaPalabra(row, word);
+              } else {
+                alert("Esa palabra no existe en MI diccionario");
+              }
+            } else {
+              alert("La palabra debe tener 5 letras");
+            }
+          }
+        });
+      });
+
+      function ajaxCompruebaPalabra(word) {
+        let url = `http://localhost/api.php?w=${word}`;
+
+        const xhttp = new XMLHttpRequest();
+
+        xhttp.open("GET", url, false);
+        xhttp.send();
+
+        let response = null;
+        if (xhttp.responseText !== "null") {
+          response = JSON.parse(xhttp.responseText).nom_palabra;
+        }
+        return response;
+      }
+
+      function ajaxGETPalabraRandom() {
+        let url = `http://localhost/api.php`;
+
+        const xhttp = new XMLHttpRequest();
+
+        //True: async, false: sync
+        xhttp.open("GET", url, false);
+        xhttp.send();
+
+        return JSON.parse(xhttp.responseText).nom_palabra;
+      }
+
+      //  Calcula las ocurrencias de las letras en la palabra
+      function word_dictionary(word) {
+        let dict = new Map();
+        for (let i = 0; i < word.length; i++) {
+          if (dict.has(word[i])) {
+            dict.set(word[i], dict.get(word[i]) + 1);
+          } else {
+            dict.set(word[i], 1);
+          }
+        }
+        return dict;
+      }
+      const palabraAdivinar = ajaxGETPalabraRandom();
+      // const palabraAdivinar = "VIVAZ";
+      const dict_word_main = word_dictionary(palabraAdivinar);
+      console.log(
+        "🚀 ~ file: index.html ~ line 203 ~ dict_word_main",
+        dict_word_main
+      );
+      console.log(palabraAdivinar);
+    </script>
   </body>
 </html>

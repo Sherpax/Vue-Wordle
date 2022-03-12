@@ -1,26 +1,35 @@
+<!-- Autor: Manuel Santiago Vázquez Del Pino -->
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="grid">
+    <inputRow></inputRow>
+    <inputRow></inputRow>
+    <inputRow></inputRow>
+    <inputRow></inputRow>
+    <inputRow></inputRow>
+  </div>
+  <btn-check></btn-check>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import InputRow from "./components/InputRow";
+import BtnCheck from "./components/BtnCheck.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
+    InputRow,
+    BtnCheck,
+  },
+};
+
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+body {
+  background-color: black;
+}
+
+.grid {
+  margin-top: 140px;
 }
 </style>
