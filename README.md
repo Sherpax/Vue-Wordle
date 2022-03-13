@@ -1,5 +1,15 @@
 # Vue-Wordle
 
+## Cómo instalar - How to install
+
+<pre>
+    <code>
+        npm install
+    </code>
+</pre>
+
+---
+
 Imitación famoso juego wordly hecho en VUE 3
 
 sql -> contiene el script de creación y los inserts del diccionario
