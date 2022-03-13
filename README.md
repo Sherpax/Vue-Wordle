@@ -2,11 +2,7 @@
 
 ## Cómo instalar - How to install
 
-<pre>
-    <code>
-        npm install
-    </code>
-</pre>
+<pre><code>npm install</code></pre>
 
 ---
 
@@ -31,22 +27,14 @@ api.php -> api to get random words and check if the input word exists
 
 Para iniciar el cliente:
 
-<pre>
-    <code>
-vue serve 
-    </code>
-</pre>
+<pre><code>vue serve </code></pre>
 
 El archivo api.php debe estar en el lado del servidor
 
 ---
 To start the client
 
-<pre>
-    <code>
-vue serve 
-    </code>
-</pre> 
+<pre><code>vue serve </code></pre> 
 
 The api.php file must be placed inside the server side
 
