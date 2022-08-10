@@ -42,15 +42,12 @@ export default {
     filtraTeclas(e) {
       e.preventDefault();
       const REGEX_LETTERS_ONLY = /^[a-zA-ZñÑ]+/;
-      if (REGEX_LETTERS_ONLY.test(e.key)) {
-        e.target.value = e.key.toUpperCase();
+      if (e.keyCode !== 13 && e.key.match(REGEX_LETTERS_ONLY)) {
+          e.target.value = e.key.toUpperCase();
       }
     },
   },
 };
-
-
-
 </script>
 
 <style scoped>
@@ -62,12 +59,6 @@ export default {
   column-gap: 7px;
 }
 
-@media only screen and (max-width: 450px) {
-  .row {
-    column-gap: 31px;
-  }
-}
-
 .row > input {
   padding: 30px;
   width: 25px;
@@ -76,5 +67,35 @@ export default {
   color: rgb(243, 9, 9);
   font-size: larger;
   font-weight: bold;
+}
+
+@media only screen and (max-width: 470px) {
+  .row {
+    column-gap: 0px;
+  }
+  .row > input {
+    padding: 18px !important;
+    width: 33px !important;
+  }
+}
+
+@media only screen and (max-width: 375px) {
+  .row {
+    column-gap: 0px;
+  }
+  .row > input {
+    padding: 15px !important;
+    width: 33px !important;
+  }
+}
+
+@media only screen and (max-width: 346px) {
+  .row {
+    column-gap: 0px;
+  }
+  .row > input {
+    padding: 13px !important;
+    width: 33px !important;
+  }
 }
 </style>

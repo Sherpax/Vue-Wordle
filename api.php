@@ -1,27 +1,29 @@
 <?php
+header('Content-Type: application/json');
 
 switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':
-        $conexion = new mysqli("localhost", "root", "", "diccionario");
+        $conexion = new mysqli("localhost", "root", "", "database");
 
         if (isset($_GET['w']) && !empty($_GET['w'])) {
             $word = $_GET['w'];
-            //TODO: Cambiar y ponerlo con BIND
+
             $sqlQuery = "SELECT * 
                         FROM palabra p
-                        WHERE p.nom_palabra = '$word'
+                        WHERE p.nom_palabra = ?
                         ";
+            $sqlQuery = $conexion->prepare($sqlQuery);
+            $sqlQuery->bind_param("s", $word);
+            $resultado = $sqlQuery->execute();
+            $palabra = $sqlQuery->get_result()->fetch_assoc();
         } else {
 
             $sqlQuery = "SELECT * 
                         FROM palabra
                         ORDER BY RAND()
                         LIMIT 1;";
+            $palabra = $conexion->query($sqlQuery)->fetch_assoc();
         }
-
-        $palabra = $conexion->query($sqlQuery)->fetch_assoc();
-
-        header('Content-Type: application/json');
 
         echo json_encode($palabra);
 
@@ -29,6 +31,5 @@ switch ($_SERVER['REQUEST_METHOD']) {
         break;
 
     default:
-        # code...
         break;
 }
