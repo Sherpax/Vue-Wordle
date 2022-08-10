@@ -1,11 +1,11 @@
 .DS_Store
 node_modules
 /dist
-host.txt
 
 # local env files
 .env.local
 .env.*.local
+host.txt
 
 # Log files
 npm-debug.log*
