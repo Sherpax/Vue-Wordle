@@ -1,6 +1,6 @@
 # Vue-Wordle
 
-Demo: http://wordle-vue-api.unaux.com/
+Demo: http://vue-wordle.infinityfreeapp.com/
 
 ## Cómo instalar - How to install
 
